@@ -10,10 +10,22 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CRUD'),
+        title: Text(
+          'CRUD',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
+          ),
+        ),
       ),
-      body: const Center(
-        child: Text('HOME'),
+      body: Center(
+        child: Text(
+          'HOME',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
+          ),
+        ),
       ),
     );
   }

@@ -26,7 +26,7 @@ class _ScaffoldWithNavState extends State<ScaffoldWithNav> {
 
   void onTapBottomNav(int index) {
     final hasAlreadyOnBranch = index == widget.navigationShell.currentIndex;
-
+    print(widget.navigationShell.currentIndex);
     if (hasAlreadyOnBranch) {
       context.go(NAV_INDEX_MAPPER[index]!);
     } else {
@@ -57,9 +57,12 @@ class _ScaffoldWithNavState extends State<ScaffoldWithNav> {
         type: BottomNavigationBarType.fixed,
         currentIndex: currentIndex,
         onTap: onTapBottomNav,
+        selectedItemColor: const Color(0xFF6200EE),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(
+              Icons.home,
+            ),
             label: '홈',
           ),
           BottomNavigationBarItem(

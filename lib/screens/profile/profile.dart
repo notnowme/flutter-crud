@@ -1,6 +1,7 @@
 import 'package:crud/controllers/join_controller.dart';
 import 'package:crud/models/join_model.dart';
 import 'package:crud/routes.dart';
+import 'package:crud/screens/profile/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,6 +10,7 @@ class Profile extends ConsumerWidget {
 
   static const String routeName = 'profile';
   static const String routePath = '/profile';
+
   void join() async {
     final info = JoinModel(
       id: 'test101',
@@ -30,9 +32,9 @@ class Profile extends ConsumerWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            join();
+            route.pushNamed(LoginScreen.routeName);
           },
-          child: const Text('go join'),
+          child: const Text('로그인 페이지'),
         ),
       ),
     );

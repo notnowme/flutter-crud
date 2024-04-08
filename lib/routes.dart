@@ -1,6 +1,7 @@
 import 'package:crud/screens/free/free.dart';
 import 'package:crud/screens/home/home.dart';
 import 'package:crud/screens/profile/join_screen.dart';
+import 'package:crud/screens/profile/login_screen.dart';
 import 'package:crud/screens/profile/profile.dart';
 import 'package:crud/screens/qna/qna.dart';
 import 'package:crud/screens/scaffold_withnav.dart';
@@ -48,14 +49,23 @@ List<RouteBase> _profileRoutes = [
     pageBuilder: (context, state) => const NoTransitionPage(
       child: Profile(),
     ),
+    routes: [
+      GoRoute(
+        path: LoginScreen.routePath,
+        name: LoginScreen.routeName,
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: LoginScreen(),
+        ),
+      ),
+      GoRoute(
+        path: JoinScreen.routePath,
+        name: JoinScreen.routeName,
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: JoinScreen(),
+        ),
+      ),
+    ],
   ),
-  // GoRoute(
-  //   path: JoinScreen.routePath,
-  //   name: JoinScreen.routeName,
-  //   pageBuilder: (context, state) => const NoTransitionPage(
-  //     child: JoinScreen(),
-  //   ),
-  // ),
 ];
 
 final routesProvider = Provider((ref) {
