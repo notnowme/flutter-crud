@@ -57,13 +57,6 @@ List<RouteBase> _profileRoutes = [
           child: LoginScreen(),
         ),
       ),
-      GoRoute(
-        path: JoinScreen.routePath,
-        name: JoinScreen.routeName,
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: JoinScreen(),
-        ),
-      ),
     ],
   ),
 ];
@@ -83,6 +76,13 @@ final routesProvider = Provider((ref) {
           StatefulShellBranch(routes: _qnaRoutes),
           StatefulShellBranch(routes: _profileRoutes),
         ],
+      ),
+      GoRoute(
+        path: JoinScreen.routePath,
+        name: JoinScreen.routeName,
+        pageBuilder: (context, state) => NoTransitionPage(
+          child: JoinScreen(),
+        ),
       ),
     ],
   );

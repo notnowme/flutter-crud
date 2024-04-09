@@ -6,6 +6,7 @@ class InputFieldWidget extends StatefulWidget {
   final bool isAutoFocus;
   final bool isPassword;
   final bool isError;
+  final Function validFunction;
   const InputFieldWidget({
     super.key,
     required this.cat,
@@ -13,6 +14,7 @@ class InputFieldWidget extends StatefulWidget {
     required this.isAutoFocus,
     required this.isPassword,
     required this.isError,
+    required this.validFunction,
   });
 
   @override
@@ -22,7 +24,6 @@ class InputFieldWidget extends StatefulWidget {
 class _InputFieldWidgetState extends State<InputFieldWidget> {
   late FocusNode _focusNode;
   late bool hiddenPassword;
-  String msg = '';
 
   @override
   void initState() {
@@ -61,17 +62,29 @@ class _InputFieldWidgetState extends State<InputFieldWidget> {
           height: 4,
         ),
         SizedBox(
-          height: 50,
+          height: 74,
           child: TextFormField(
             focusNode: _focusNode,
             autofocus: widget.isAutoFocus,
             controller: widget.controller,
             obscureText: hiddenPassword,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return '입력해 주세요';
+              } else {
+                final result = widget.validFunction(value);
+                return result.isEmpty ? null : result;
+              }
+            },
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
             ),
             decoration: InputDecoration(
+                helperText: ' ',
+                helperStyle: TextStyle(
+                  fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+                ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 10,
@@ -88,6 +101,7 @@ class _InputFieldWidgetState extends State<InputFieldWidget> {
                 ),
                 errorStyle: TextStyle(
                   fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+                  color: Theme.of(context).colorScheme.error,
                 ),
                 filled: true,
                 fillColor: Theme.of(context).colorScheme.surface,

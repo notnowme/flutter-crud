@@ -17,51 +17,34 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController idTextController = TextEditingController();
   final TextEditingController passwordTextController = TextEditingController();
+  final _idFormKey = GlobalKey<FormState>();
+  final _passwordFormKey = GlobalKey<FormState>();
   String idMsg = '아이디를 입력해 주세요', pwMsg = '비밀번호를 입력해 주세요';
   bool idCheck = false, pwCheck = false;
 
-  void _handleIdReg(String id) {
-    if (id.length < 4) {
-      setState(() {
-        idMsg = '4글자 이상 입력해야해요';
-        idCheck = false;
-      });
-      return;
-    }
+  String _handleIdReg(String id) {
     RegExp regex = RegExp(r'^[a-zA-Z0-9_\.]+$');
     if (!regex.hasMatch(id)) {
-      setState(() {
-        idMsg = '입력할 수 없는 문자가 있어요';
-        idCheck = false;
-      });
-      return;
+      return '입력할 수 없는 문자가 있어요';
     }
-    setState(() {
-      idMsg = '';
-      idCheck = true;
-    });
+    if (id.length < 4) {
+      return '4글자 이상 입력해야해요';
+    }
+    if (id.length > 20) {
+      return '20글자까지 입력할 수 있어요';
+    }
+    return '';
   }
 
-  void _handlePwReg(String pw) {
+  String _handlePwReg(String pw) {
     if (pw.length < 7) {
-      setState(() {
-        pwMsg = '7글자 이상 입력해야해요';
-        pwCheck = false;
-      });
-      return;
+      return '7글자 이상 입력해야해요';
     }
     RegExp regex = RegExp(r'^[a-zA-Z0-9!@#$%^*+=-]+$');
     if (!regex.hasMatch(pw)) {
-      setState(() {
-        pwMsg = '입력할 수 없는 문자가 있어요';
-        pwCheck = false;
-      });
-      return;
+      return '입력할 수 없는 문자가 있어요';
     }
-    setState(() {
-      pwMsg = '';
-      pwCheck = true;
-    });
+    return '';
   }
 
   @override
@@ -96,9 +79,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               Column(
                 children: [
                   Form(
-                    onChanged: () {
-                      _handleIdReg(idTextController.text);
-                    },
+                    key: _idFormKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -108,20 +89,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           isAutoFocus: true,
                           isPassword: false,
                           isError: idCheck,
+                          validFunction: _handleIdReg,
                         ),
                         const SizedBox(
                           height: 4,
                         ),
-                        Text(
-                          idMsg,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                            fontSize: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.fontSize,
-                          ),
-                        )
                       ],
                     ),
                   ),
@@ -129,9 +101,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     height: 20,
                   ),
                   Form(
-                    onChanged: () {
-                      _handlePwReg(passwordTextController.text);
-                    },
+                    key: _passwordFormKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -141,20 +111,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           isAutoFocus: false,
                           isPassword: true,
                           isError: pwCheck,
+                          validFunction: _handlePwReg,
                         ),
                         const SizedBox(
                           height: 4,
                         ),
-                        Text(
-                          pwMsg,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                            fontSize: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.fontSize,
-                          ),
-                        )
                       ],
                     ),
                   ),
@@ -166,12 +127,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
+                        final idCheck = _idFormKey.currentState!.validate();
+                        final pwCheck =
+                            _passwordFormKey.currentState!.validate();
                         if (idCheck && pwCheck) {
-                          // 로그인 로직 작성하기...
-                          debugPrint('ok!');
-                          return;
+                          print('go login');
                         }
-                        return;
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: idCheck && pwCheck
@@ -204,9 +165,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               Theme.of(context).textTheme.bodyMedium?.fontSize,
                           color: Theme.of(context).colorScheme.secondary,
                         ),
-                      ),
-                      const SizedBox(
-                        width: 4,
                       ),
                       TextButton(
                           onPressed: () {
