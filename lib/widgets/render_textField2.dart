@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
 
-class RenderTextField extends StatefulWidget {
-  const RenderTextField({
+class RenderTextField2 extends StatefulWidget {
+  const RenderTextField2({
     super.key,
     required this.label,
     required this.validator,
     required this.controller,
     required this.isAutoFocus,
     required this.isPassword,
+    required this.onSaved,
+    required this.onFieldSubmitted,
   });
 
   final String label;
   final bool isAutoFocus;
   final bool isPassword;
   final FormFieldValidator validator;
+  final FormFieldSetter onSaved;
   final TextEditingController controller;
+  final Function(String)? onFieldSubmitted;
 
   @override
-  State<RenderTextField> createState() => _RenderTextFieldState();
+  State<RenderTextField2> createState() => _RenderTextField2State();
 }
 
-class _RenderTextFieldState extends State<RenderTextField> {
+class _RenderTextField2State extends State<RenderTextField2> {
   late bool hiddenPassword;
 
   void _clearTextField() {
@@ -62,6 +66,8 @@ class _RenderTextFieldState extends State<RenderTextField> {
           child: TextFormField(
             controller: widget.controller,
             validator: widget.validator,
+            onSaved: widget.onSaved,
+            onFieldSubmitted: widget.onFieldSubmitted,
             autofocus: widget.isAutoFocus,
             autovalidateMode: AutovalidateMode.always,
             obscureText: hiddenPassword,

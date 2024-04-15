@@ -1,25 +1,12 @@
+import 'dart:async';
+
+import 'package:crud/models/join_model.dart';
 import 'package:crud/services/dio_service.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class JoinController {
   final Dio _dio = DioService().to();
-
-  Future<Map<String, dynamic>> join(Map<String, dynamic> info) async {
-    try {
-      final res = await _dio.post(
-        'auth/local/join',
-        data: info,
-        options: Options(
-          contentType: Headers.jsonContentType,
-          responseType: ResponseType.json,
-        ),
-      );
-      final result = res.data;
-      return result;
-    } catch (e) {
-      throw Exception(e);
-    }
-  }
 
   Future<Map<String, dynamic>> idCheck(String id) async {
     try {
@@ -56,4 +43,25 @@ class JoinController {
       throw Exception(e);
     }
   }
+
+  Future<Map<String, dynamic>?> join(JoinModel user) async {
+    try {
+      final data = user.toJson();
+      final res = await _dio.post(
+        'auth/local/join',
+        data: data,
+        options: Options(
+          contentType: Headers.jsonContentType,
+          responseType: ResponseType.json,
+        ),
+      );
+      final result = res.data;
+      return result;
+    } catch (e) {
+      if (e is DioException) rethrow;
+    }
+    return null;
+  }
 }
+
+final authController = Provider((ref) => JoinController());

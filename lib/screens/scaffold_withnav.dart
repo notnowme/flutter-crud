@@ -26,7 +26,6 @@ class _ScaffoldWithNavState extends State<ScaffoldWithNav> {
 
   void onTapBottomNav(int index) {
     final hasAlreadyOnBranch = index == widget.navigationShell.currentIndex;
-    print(widget.navigationShell.currentIndex);
     if (hasAlreadyOnBranch) {
       context.go(NAV_INDEX_MAPPER[index]!);
     } else {

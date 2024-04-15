@@ -11,16 +11,16 @@ class Profile extends ConsumerWidget {
   static const String routeName = 'profile';
   static const String routePath = '/profile';
 
-  void join() async {
-    final info = JoinModel(
-      id: 'test101',
-      nick: 'test101',
-      password: '1234',
-    ).toJson();
+  // void join() async {
+  //   final info = JoinModel(
+  //     id: 'test101',
+  //     nick: 'test101',
+  //     password: '1234',
+  //   ).toJson();
 
-    final result = await JoinController().join(info);
-    debugPrint(result.toString());
-  }
+  //   final result = await JoinController().join(info);
+  //   debugPrint(result.toString());
+  // }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

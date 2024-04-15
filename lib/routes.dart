@@ -1,6 +1,7 @@
 import 'package:crud/screens/free/free.dart';
 import 'package:crud/screens/home/home.dart';
 import 'package:crud/screens/profile/join_screen.dart';
+import 'package:crud/screens/profile/join_screen2.dart';
 import 'package:crud/screens/profile/login_screen.dart';
 import 'package:crud/screens/profile/profile.dart';
 import 'package:crud/screens/qna/qna.dart';
@@ -78,10 +79,10 @@ final routesProvider = Provider((ref) {
         ],
       ),
       GoRoute(
-        path: JoinScreen.routePath,
-        name: JoinScreen.routeName,
-        pageBuilder: (context, state) => NoTransitionPage(
-          child: JoinScreen(),
+        path: JoinScreenWidget.routePath,
+        name: JoinScreenWidget.routeName,
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: JoinScreenWidget(),
         ),
       ),
     ],
