@@ -1,6 +1,12 @@
+import 'package:crud/hooks/vali_hooks.dart';
+import 'package:crud/models/join_model.dart';
+import 'package:crud/models/login_model.dart';
+import 'package:crud/providers/join_provider.dart';
+import 'package:crud/providers/storage_provider.dart';
 import 'package:crud/routes.dart';
 import 'package:crud/screens/profile/join_screen.dart';
 import 'package:crud/widgets/render_textField.dart';
+import 'package:crud/widgets/render_textField2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,6 +22,8 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final formKey = GlobalKey<FormState>();
+  FocusNode idFocus = FocusNode();
+  FocusNode pwFocus = FocusNode();
 
   bool formCheck = false;
 
@@ -25,9 +33,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       height: 50,
       child: ElevatedButton(
         onPressed: () async {
-          final isValided = formKey.currentState!.validate();
-          if (isValided) {
-            debugPrint('go login');
+          if (formCheck) {
+            LoginModel user = LoginModel(
+              id: idController.text,
+              password: passwordController.text,
+            );
+            final result =
+                await ref.read(asyncJoinProvider.notifier).login(user);
+            if (result) {
+              ref.read(routesProvider).pop();
+            } else {
+              final data =
+                  ref.read(asyncJoinProvider.notifier).getData()!['code'];
+              switch (data) {
+                case 404:
+                  idFocus.requestFocus();
+                  break;
+                case 401:
+                  pwFocus.requestFocus();
+                  break;
+              }
+            }
           } else {
             debugPrint('no');
           }
@@ -121,38 +147,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         child: SizedBox(
                           width: double.infinity,
                           // height: 80,
-                          child: RenderTextField(
+                          child: RenderTextField2(
+                            focusNode: idFocus,
                             label: '아이디',
                             controller: idController,
                             isAutoFocus: true,
                             isPassword: false,
+                            onSaved: (value) {},
+                            onFieldSubmitted: (value) {},
                             validator: (value) {
-                              if (value.length < 1) {
-                                return '반드시 입력해야 해요';
-                              }
-                              if (value.length < 4) {
-                                return '4글자 이상 입력해야 해요';
-                              }
-                              return null;
+                              return ValidatorHooks.validateId(value);
                             },
                           ),
                         ),
                       ),
                     ],
                   ),
-                  RenderTextField(
+                  RenderTextField2(
+                    focusNode: pwFocus,
                     label: '비밀번호',
                     controller: passwordController,
                     isAutoFocus: false,
                     isPassword: true,
+                    onFieldSubmitted: (value) {},
+                    onSaved: (value) {},
                     validator: (value) {
-                      if (value.length < 1) {
-                        return '반드시 입력해야 해요';
-                      }
-                      if (value.length < 8) {
-                        return '8글자 이상 입력해야 해요';
-                      }
-                      return null;
+                      return ValidatorHooks.validatePassword(value);
                     },
                   ),
                 ],

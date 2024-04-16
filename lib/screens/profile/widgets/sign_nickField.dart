@@ -77,6 +77,7 @@ class _SignNickFieldWidgetState extends ConsumerState<SignNickFieldWidget> {
                         }
                       },
                       child: RenderTextField2(
+                        focusNode: null,
                         label: '닉네임',
                         validator: (value) {
                           return ValidatorHooks.validateNick(value);

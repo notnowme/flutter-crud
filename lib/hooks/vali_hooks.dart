@@ -37,12 +37,12 @@ class ValidatorHooks {
     if (pw.isEmpty) {
       return '반드시 입력해야해요';
     }
-    if (pw.length < 7) {
-      return '7글자 이상 입력해야해요';
-    }
     RegExp regex = RegExp(r'^[a-zA-Z0-9!@#$%^*+=-]+$');
     if (!regex.hasMatch(pw)) {
       return '입력할 수 없는 문자가 있어요';
+    }
+    if (pw.length < 8) {
+      return '8글자 이상 입력해야해요';
     }
     return null;
   }
@@ -51,8 +51,8 @@ class ValidatorHooks {
     if (pwChk.isEmpty) {
       return '반드시 입력해야해요';
     }
-    if (pwChk.length < 7) {
-      return '7글자 이상 입력해야해요';
+    if (pwChk.length < 8) {
+      return '8글자 이상 입력해야해요';
     }
     if (pwChk != pw) {
       return '비밀번호가 일치하지 않아요';

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:crud/models/join_model.dart';
+import 'package:crud/models/login_model.dart';
 import 'package:crud/services/dio_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,6 +50,25 @@ class JoinController {
       final data = user.toJson();
       final res = await _dio.post(
         'auth/local/join',
+        data: data,
+        options: Options(
+          contentType: Headers.jsonContentType,
+          responseType: ResponseType.json,
+        ),
+      );
+      final result = res.data;
+      return result;
+    } catch (e) {
+      if (e is DioException) rethrow;
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> login(LoginModel user) async {
+    try {
+      final data = user.toJson();
+      final res = await _dio.post(
+        'auth/login',
         data: data,
         options: Options(
           contentType: Headers.jsonContentType,

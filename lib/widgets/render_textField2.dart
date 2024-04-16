@@ -10,6 +10,7 @@ class RenderTextField2 extends StatefulWidget {
     required this.isPassword,
     required this.onSaved,
     required this.onFieldSubmitted,
+    required this.focusNode,
   });
 
   final String label;
@@ -19,6 +20,7 @@ class RenderTextField2 extends StatefulWidget {
   final FormFieldSetter onSaved;
   final TextEditingController controller;
   final Function(String)? onFieldSubmitted;
+  final FocusNode? focusNode;
 
   @override
   State<RenderTextField2> createState() => _RenderTextField2State();
@@ -64,6 +66,7 @@ class _RenderTextField2State extends State<RenderTextField2> {
         SizedBox(
           height: 80,
           child: TextFormField(
+            focusNode: widget.focusNode,
             controller: widget.controller,
             validator: widget.validator,
             onSaved: widget.onSaved,

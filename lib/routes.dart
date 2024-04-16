@@ -3,7 +3,7 @@ import 'package:crud/screens/home/home.dart';
 import 'package:crud/screens/profile/join_screen.dart';
 import 'package:crud/screens/profile/join_screen2.dart';
 import 'package:crud/screens/profile/login_screen.dart';
-import 'package:crud/screens/profile/profile.dart';
+import 'package:crud/screens/profile/profile_main.dart';
 import 'package:crud/screens/qna/qna.dart';
 import 'package:crud/screens/scaffold_withnav.dart';
 import 'package:flutter/material.dart';

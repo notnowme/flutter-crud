@@ -1,6 +1,6 @@
 import 'package:crud/screens/free/free.dart';
 import 'package:crud/screens/home/home.dart';
-import 'package:crud/screens/profile/profile.dart';
+import 'package:crud/screens/profile/profile_main.dart';
 import 'package:crud/screens/qna/qna.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

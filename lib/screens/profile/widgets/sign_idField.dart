@@ -78,6 +78,7 @@ class _SignIdFieldWidgetState extends ConsumerState<SignIdFieldWidget> {
                         }
                       },
                       child: RenderTextField2(
+                        focusNode: null,
                         label: '아이디',
                         validator: (value) {
                           return ValidatorHooks.validateId(value);
@@ -85,7 +86,7 @@ class _SignIdFieldWidgetState extends ConsumerState<SignIdFieldWidget> {
                         onSaved: (value) async {},
                         onFieldSubmitted: (value) {},
                         controller: idController,
-                        isAutoFocus: false,
+                        isAutoFocus: true,
                         isPassword: false,
                       ),
                     )
