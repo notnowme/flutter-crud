@@ -82,6 +82,30 @@ class JoinController {
     }
     return null;
   }
+
+  Future<Map<String, dynamic>?> changeNick(String nick, String token) async {
+    try {
+      final data = {
+        'nick': nick,
+      };
+      final res = await _dio.patch(
+        'users',
+        data: data,
+        options: Options(
+          contentType: Headers.jsonContentType,
+          headers: {
+            'Authorization': token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      final result = res.data;
+      return result;
+    } catch (e) {
+      if (e is DioException) rethrow;
+    }
+    return null;
+  }
 }
 
 final authController = Provider((ref) => JoinController());

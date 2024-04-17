@@ -4,6 +4,7 @@ import 'package:crud/controllers/join_controller.dart';
 import 'package:crud/models/join_model.dart';
 import 'package:crud/models/login_model.dart';
 import 'package:crud/providers/storage_provider.dart';
+import 'package:crud/providers/user_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -134,6 +135,38 @@ class JoinAsyncNotifier extends AsyncNotifier<void> {
         ),
       ],
     );
+    return true;
+  }
+
+  FutureOr<bool> changeNick(String nick) async {
+    final userData = ref.watch(userProvider);
+    state = const AsyncValue.loading();
+
+    state = await AsyncValue.guard(() async {
+      resultData = await _auth.changeNick(nick, userData!['accessToken']);
+    });
+
+    if (state.hasError) {
+      DioException err = state.error as DioException;
+      if (err.response?.statusCode == 409) {
+        showToast('다시 로그인해 주세요');
+        await storage.deleteAll();
+        resultData = {
+          'code': 401,
+        };
+        return false;
+      }
+      if (err.response?.statusCode == 409) {
+        showToast('이미 있는 닉네임이에요');
+        resultData = {
+          'code': 409,
+        };
+        return false;
+      }
+      return false;
+    }
+    await storage.write(key: 'nick', value: resultData!['data']['nick']);
+    showToast('변경했어요!');
     return true;
   }
 

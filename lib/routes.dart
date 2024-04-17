@@ -50,15 +50,7 @@ List<RouteBase> _profileRoutes = [
     pageBuilder: (context, state) => const NoTransitionPage(
       child: Profile(),
     ),
-    routes: [
-      GoRoute(
-        path: LoginScreen.routePath,
-        name: LoginScreen.routeName,
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: LoginScreen(),
-        ),
-      ),
-    ],
+    routes: const [],
   ),
 ];
 
@@ -84,6 +76,15 @@ final routesProvider = Provider((ref) {
         pageBuilder: (context, state) => const NoTransitionPage(
           child: JoinScreenWidget(),
         ),
+      ),
+      GoRoute(
+        path: LoginScreen.routePath,
+        name: LoginScreen.routeName,
+        pageBuilder: (context, state) {
+          return const NoTransitionPage(
+            child: LoginScreen(),
+          );
+        },
       ),
     ],
   );
