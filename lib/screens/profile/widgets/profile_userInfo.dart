@@ -1,3 +1,4 @@
+import 'package:crud/hooks/toast.dart';
 import 'package:crud/hooks/vali_hooks.dart';
 import 'package:crud/providers/join_provider.dart';
 import 'package:crud/providers/user_provider.dart';
@@ -6,6 +7,7 @@ import 'package:crud/widgets/render_textField2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 
 class UserInfoWidget extends ConsumerStatefulWidget {
@@ -34,6 +36,7 @@ class _UserInfoWidgetState extends ConsumerState<UserInfoWidget> {
       if (result) {
         // 변경 성공
         if (mounted) {
+          ToastMessage.showToast(context, 'success', '변경했어요!');
           ref.read(userProvider.notifier).init();
           nickController.clear();
           context.pop();
@@ -43,9 +46,15 @@ class _UserInfoWidgetState extends ConsumerState<UserInfoWidget> {
         final data = ref.read(asyncJoinProvider.notifier).getData()!['code'];
         switch (data) {
           case 401:
-            if (mounted) context.goNamed(Home.routeName);
+            if (mounted) {
+              ToastMessage.showToast(context, 'error', '다시 로그인해 주세요');
+              context.goNamed(Home.routeName);
+            }
             break;
           case 409:
+            if (mounted) {
+              ToastMessage.showToast(context, 'error', '이미 있는 닉네임이에요');
+            }
             nickController.clear();
             focusNode.requestFocus();
             break;
@@ -131,6 +140,8 @@ class _UserInfoWidgetState extends ConsumerState<UserInfoWidget> {
   void _showBottomSheet() {
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
       clipBehavior: Clip.hardEdge,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
@@ -138,110 +149,113 @@ class _UserInfoWidgetState extends ConsumerState<UserInfoWidget> {
         ),
       ),
       builder: (context) {
-        return Wrap(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 5,
-                horizontal: 5,
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: IconButton(
-                        onPressed: () {
-                          nickController.clear();
-                          context.pop();
-                        },
-                        icon: const Icon(
-                          Icons.close,
-                          color: Colors.black,
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Wrap(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: IconButton(
+                          onPressed: () {
+                            nickController.clear();
+                            context.pop();
+                          },
+                          icon: const Icon(
+                            Icons.close,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          '닉네임 변경',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.fontSize,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 300,
-                          child: Form(
-                            key: nickFormKey,
-                            child: RenderTextField2(
-                              label: '',
-                              validator: (value) {
-                                return ValidatorHooks.validateNick(value);
-                              },
-                              controller: nickController,
-                              isAutoFocus: true,
-                              isPassword: false,
-                              onSaved: (value) {},
-                              onFieldSubmitted: (value) {},
-                              focusNode: focusNode,
+                      Column(
+                        children: [
+                          Text(
+                            '닉네임 변경',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.fontSize,
                             ),
                           ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                nickController.clear();
-                                context.pop();
-                              },
-                              child: Text(
-                                '취소',
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontSize: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.fontSize,
-                                ),
+                          SizedBox(
+                            width: 300,
+                            child: Form(
+                              key: nickFormKey,
+                              child: RenderTextField2(
+                                label: '',
+                                validator: (value) {
+                                  return ValidatorHooks.validateNick(value);
+                                },
+                                controller: nickController,
+                                isAutoFocus: true,
+                                isPassword: false,
+                                onSaved: (value) {},
+                                onFieldSubmitted: (value) {},
+                                focusNode: focusNode,
                               ),
                             ),
-                            const SizedBox(
-                              width: 60,
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                _changeNick();
-                              },
-                              child: Text(
-                                '변경',
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  fontSize: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.fontSize,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  nickController.clear();
+                                  context.pop();
+                                },
+                                child: Text(
+                                  '취소',
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontSize: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.fontSize,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                      ],
-                    ),
-                  ],
+                              const SizedBox(
+                                width: 60,
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  _changeNick();
+                                },
+                                child: Text(
+                                  '변경',
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                    fontSize: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.fontSize,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            )
-          ],
+            ],
+          ),
         );
       },
     );

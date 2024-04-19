@@ -1,6 +1,6 @@
+import 'package:crud/providers/free_provider.dart';
 import 'package:crud/providers/path_provider.dart';
 import 'package:crud/providers/user_provider.dart';
-import 'package:crud/routes.dart';
 import 'package:crud/screens/free/free.dart';
 import 'package:crud/screens/home/home.dart';
 import 'package:crud/screens/profile/login_screen.dart';
@@ -38,8 +38,8 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
   void onTapBottomNav(int index) {
     final hasAlreadyOnBranch = index == widget.navigationShell.currentIndex;
     final userData = ref.watch(userProvider);
+
     if (index == 3) {
-      debugPrint('nav에서 프로필 클릭');
       if (userData == null) {
         _showDialog();
         return;
@@ -48,6 +48,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
     if (hasAlreadyOnBranch) {
       context.go(NAV_INDEX_MAPPER[index]!);
     } else {
+      // context.push(NAV_INDEX_MAPPER[index]!);
       widget.navigationShell.goBranch(index);
     }
   }
@@ -101,8 +102,6 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
   }
 
   void _showDialog() {
-    final route = ref.watch(routesProvider);
-    debugPrint('nav의 다이어로그');
     showDialog<void>(
       context: context,
       barrierDismissible: false,

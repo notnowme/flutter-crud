@@ -9,6 +9,7 @@ import 'package:crud/screens/profile/login_screen.dart';
 import 'package:crud/screens/profile/widgets/profile_boardInfo.dart';
 import 'package:crud/screens/profile/widgets/profile_logout.dart';
 import 'package:crud/screens/profile/widgets/profile_userInfo.dart';
+import 'package:crud/screens/profile/widgets/profile_withdraw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -60,7 +61,6 @@ class _ProfileState extends ConsumerState<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    final route = ref.watch(routesProvider);
     final userData = ref.watch(userProvider);
     final storage = ref.watch(secureStorageProvider);
 
@@ -85,74 +85,80 @@ class _ProfileState extends ConsumerState<Profile> {
           ? const Center(
               child: Text('프로필'),
             )
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    children: [
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      const UserInfoWidget(),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      const BoardInfoWidget(
-                        label: '자유 게시판',
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      const BoardInfoWidget(
-                        label: '질문 게시판',
-                      ),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      SizedBox(
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        const UserInfoWidget(),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        const BoardInfoWidget(
+                          label: '자유 게시판',
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        const BoardInfoWidget(
+                          label: '질문 게시판',
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            )),
+                            onPressed: () {
+                              _showLogoutDialog();
+                            },
+                            child: const Text('로그아웃'),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          )),
-                          onPressed: () {
-                            _showLogoutDialog();
-                          },
-                          child: const Text('로그아웃'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 30),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            backgroundColor:
+                                Theme.of(context).colorScheme.error,
                           ),
-                          backgroundColor: Theme.of(context).colorScheme.error,
-                        ),
-                        onPressed: () async {
-                          await storage.deleteAll();
-                          ref.read(userProvider.notifier).clear();
-                        },
-                        child: Text(
-                          '탈퇴하기',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.background,
-                            fontSize:
-                                Theme.of(context).textTheme.bodyLarge?.fontSize,
+                          onPressed: () {
+                            if (mounted) {
+                              showWithdrawDialog(context, ref);
+                            }
+                          },
+                          child: Text(
+                            '탈퇴하기',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.background,
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.fontSize,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
     );
@@ -253,7 +259,6 @@ class _ProfileState extends ConsumerState<Profile> {
                       children: [
                         TextButton(
                           onPressed: () {
-                            print('테스트 12');
                             context.pop();
                           },
                           child: const Text(
@@ -269,12 +274,11 @@ class _ProfileState extends ConsumerState<Profile> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            print('테스트 13');
                             await storage.deleteAll();
-                            if (context.mounted) {
+                            if (mounted) {
                               ref.read(userProvider.notifier).clear();
+                              context.pop();
                               context.goNamed(Home.routeName);
-                              // context.pop();
                             }
                           },
                           child: const Text(

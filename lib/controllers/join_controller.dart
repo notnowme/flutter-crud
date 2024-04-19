@@ -106,6 +106,46 @@ class JoinController {
     }
     return null;
   }
+
+  Future<Map<String, dynamic>?> checkPassword(LoginModel user) async {
+    try {
+      final data = user.toJson();
+      final res = await _dio.post(
+        'auth/check/password',
+        data: data,
+        options: Options(
+          contentType: Headers.jsonContentType,
+          responseType: ResponseType.json,
+        ),
+      );
+      final result = res.data;
+      return result;
+    } catch (e) {
+      if (e is DioException) rethrow;
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> withdraw(String token) async {
+    try {
+      final res = await _dio.post(
+        'auth/local/withdraw',
+        options: Options(
+          contentType: Headers.jsonContentType,
+          headers: {
+            'Authorization': token,
+          },
+          responseType: ResponseType.json,
+        ),
+      );
+      final result = res.data;
+      print(result);
+      return result;
+    } catch (e) {
+      if (e is DioException) rethrow;
+    }
+    return null;
+  }
 }
 
 final authController = Provider((ref) => JoinController());

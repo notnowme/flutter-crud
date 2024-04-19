@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:crud/controllers/join_controller.dart';
 import 'package:crud/models/join_model.dart';
 import 'package:crud/models/login_model.dart';
@@ -8,7 +7,6 @@ import 'package:crud/providers/user_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 final joinProvider =
     FutureProvider.autoDispose.family((ref, JoinModel info) async {
@@ -28,14 +26,6 @@ class JoinAsyncNotifier extends AsyncNotifier<void> {
   late Map<String, dynamic> formData;
   late Map<String, dynamic>? resultData;
   late final FlutterSecureStorage storage;
-
-  void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      gravity: ToastGravity.CENTER,
-      toastLength: Toast.LENGTH_SHORT,
-    );
-  }
 
   @override
   FutureOr<void> build() async {
@@ -104,14 +94,12 @@ class JoinAsyncNotifier extends AsyncNotifier<void> {
     if (state.hasError) {
       DioException err = state.error as DioException;
       if (err.response?.statusCode == 401) {
-        showToast('비밀번호가 틀렸어요');
         resultData = {
           'code': 401,
         };
         return false;
       }
       if (err.response?.statusCode == 404) {
-        showToast('없는 아이디예요');
         resultData = {
           'code': 404,
         };
@@ -148,16 +136,15 @@ class JoinAsyncNotifier extends AsyncNotifier<void> {
 
     if (state.hasError) {
       DioException err = state.error as DioException;
-      if (err.response?.statusCode == 409) {
-        showToast('다시 로그인해 주세요');
+      if (err.response?.statusCode == 401) {
         await storage.deleteAll();
+        ref.read(userProvider.notifier).clear();
         resultData = {
           'code': 401,
         };
         return false;
       }
       if (err.response?.statusCode == 409) {
-        showToast('이미 있는 닉네임이에요');
         resultData = {
           'code': 409,
         };
@@ -166,7 +153,54 @@ class JoinAsyncNotifier extends AsyncNotifier<void> {
       return false;
     }
     await storage.write(key: 'nick', value: resultData!['data']['nick']);
-    showToast('변경했어요!');
+    return true;
+  }
+
+  FutureOr<bool> checkPassword(LoginModel user) async {
+    state = const AsyncValue.loading();
+
+    state = await AsyncValue.guard(() async {
+      resultData = await _auth.checkPassword(user);
+    });
+
+    if (state.hasError) {
+      DioException err = state.error as DioException;
+      resultData = {
+        'code': err.response?.statusCode,
+      };
+      return false;
+    }
+    return true;
+  }
+
+  FutureOr<bool> withdraw() async {
+    final userData = ref.watch(userProvider);
+    state = const AsyncValue.loading();
+
+    state = await AsyncValue.guard(() async {
+      resultData = await _auth.withdraw(userData!['accessToken']);
+    });
+
+    if (state.hasError) {
+      DioException err = state.error as DioException;
+      if (err.response?.statusCode == 401) {
+        await storage.deleteAll();
+        ref.read(userProvider.notifier).clear();
+        resultData = {
+          'code': 401,
+        };
+        return false;
+      }
+      if (err.response?.statusCode == 404) {
+        resultData = {
+          'code': 404,
+        };
+        return false;
+      }
+      return false;
+    }
+    await storage.deleteAll();
+    ref.read(userProvider.notifier).clear();
     return true;
   }
 

@@ -1,3 +1,4 @@
+import 'package:crud/hooks/toast.dart';
 import 'package:crud/hooks/vali_hooks.dart';
 import 'package:crud/models/join_model.dart';
 import 'package:crud/providers/join_provider.dart';
@@ -44,7 +45,9 @@ class _JoinScreenWidgetState extends ConsumerState<JoinScreenWidget> {
       final result = await ref.read(asyncJoinProvider.notifier).join(user);
       if (result) {
         // 가입됨
-        _showToast('가입에 성공했어요!');
+        if (mounted) {
+          ToastMessage.showToast(context, 'success', '가입에 성공했어요');
+        }
         setState(() {
           isAllValid = false;
         });
@@ -52,23 +55,33 @@ class _JoinScreenWidgetState extends ConsumerState<JoinScreenWidget> {
       }
     } else {
       if (id == null) {
-        _showToast('아이디를 입력해 주세요');
+        if (mounted) {
+          ToastMessage.showToast(context, 'error', '아이디를 입력해 주세요');
+        }
         return;
       }
       if (nick == null) {
-        _showToast('닉네임을 입력해 주세요');
+        if (mounted) {
+          ToastMessage.showToast(context, 'error', '닉네임을 입력해 주세요');
+        }
         return;
       }
       if (passwordController.text.isEmpty) {
-        _showToast('비밀번호를 입력해 주세요');
+        if (mounted) {
+          ToastMessage.showToast(context, 'error', '비밀번호를 입력해 주세요');
+        }
         return;
       }
       if (!idChecked) {
-        _showToast('아이디 중복 확인을 해주세요');
+        if (mounted) {
+          ToastMessage.showToast(context, 'error', '아이디 중복 확인을 해주세요');
+        }
         return;
       }
       if (!nickChecked) {
-        _showToast('닉네임 중복 확인을 해주세요');
+        if (mounted) {
+          ToastMessage.showToast(context, 'error', '닉네임 중복 확인을 해주세요');
+        }
         return;
       }
     }
@@ -273,9 +286,9 @@ class _JoinScreenWidgetState extends ConsumerState<JoinScreenWidget> {
   }
 
   void _showDialog() {
-    final route = ref.watch(routesProvider);
     showDialog<void>(
       context: context,
+      useRootNavigator: false,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
@@ -302,7 +315,7 @@ class _JoinScreenWidgetState extends ConsumerState<JoinScreenWidget> {
                     ),
                   ),
                   onPressed: () {
-                    route.pop(context);
+                    context.pop();
                   },
                 ),
                 TextButton(
@@ -315,7 +328,9 @@ class _JoinScreenWidgetState extends ConsumerState<JoinScreenWidget> {
                     ),
                   ),
                   onPressed: () {
-                    route.goNamed(LoginScreen.routeName);
+                    context.pop();
+                    context.pop();
+                    //context.goNamed(LoginScreen.routeName);
                   },
                 ),
               ],

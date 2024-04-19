@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:crud/providers/refresh_provider.dart';
 import 'package:crud/routes.dart';
 import 'package:crud/styles/style.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +20,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final route = ref.watch(routesProvider);
+
     return MaterialApp.router(
       theme: ThemeData(
         fontFamily: "Pretendard",

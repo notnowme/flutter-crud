@@ -1,12 +1,11 @@
+import 'package:crud/hooks/toast.dart';
 import 'package:crud/hooks/vali_hooks.dart';
-import 'package:crud/models/join_model.dart';
 import 'package:crud/models/login_model.dart';
 import 'package:crud/providers/join_provider.dart';
 import 'package:crud/providers/path_provider.dart';
-import 'package:crud/providers/storage_provider.dart';
 import 'package:crud/routes.dart';
+import 'package:crud/screens/home/home.dart';
 import 'package:crud/screens/profile/join_screen.dart';
-import 'package:crud/widgets/render_textField.dart';
 import 'package:crud/widgets/render_textField2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,7 +31,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool formCheck = false;
   renderButton() {
     final prevPage = ref.read(pathProvider);
-    final route = ref.read(routesProvider);
 
     return SizedBox(
       width: double.infinity,
@@ -48,19 +46,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 await ref.read(asyncJoinProvider.notifier).login(user);
             if (result) {
               if (mounted) {
-                debugPrint('로그인 성공');
-                context.pop();
-                context.pushNamed(prevPage);
+                if (prevPage.isEmpty) {
+                  context.goNamed(Home.routeName);
+                } else {
+                  if (context.canPop()) {
+                    context.pop();
+                  }
+                  context.goNamed(prevPage);
+                }
               }
             } else {
               final data =
                   ref.read(asyncJoinProvider.notifier).getData()!['code'];
               switch (data) {
-                case 404:
-                  idFocus.requestFocus();
-                  break;
                 case 401:
+                  if (mounted) {
+                    ToastMessage.showToast(context, 'error', '틀린 비밀번호예요');
+                  }
+                  passwordController.clear();
                   pwFocus.requestFocus();
+                  break;
+                case 404:
+                  if (mounted) {
+                    ToastMessage.showToast(context, 'error', '없는 아이디예요');
+                  }
+                  idFocus.requestFocus();
                   break;
               }
             }

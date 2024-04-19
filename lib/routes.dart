@@ -1,6 +1,8 @@
 import 'package:crud/screens/free/free.dart';
+import 'package:crud/screens/free/read/free_read.dart';
+import 'package:crud/screens/free/write/free_comment_write.dart';
+import 'package:crud/screens/free/write/free_write.dart';
 import 'package:crud/screens/home/home.dart';
-import 'package:crud/screens/profile/join_screen.dart';
 import 'package:crud/screens/profile/join_screen2.dart';
 import 'package:crud/screens/profile/login_screen.dart';
 import 'package:crud/screens/profile/profile_main.dart';
@@ -9,6 +11,18 @@ import 'package:crud/screens/scaffold_withnav.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+class MyNavigatorObserver extends NavigatorObserver {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('did push route');
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('did pop route');
+  }
+}
 
 final GlobalKey<NavigatorState> _rootNavKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -30,6 +44,29 @@ List<RouteBase> _freeRoutes = [
     pageBuilder: (context, state) => const NoTransitionPage(
       child: FreeBoard(),
     ),
+    routes: [
+      GoRoute(
+        path: FreeWriteWidget.routePath,
+        name: FreeWriteWidget.routeName,
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: FreeWriteWidget(),
+        ),
+      ),
+      GoRoute(
+        path: FreeReadWidget.routePath,
+        name: FreeReadWidget.routeName,
+        pageBuilder: (context, state) => NoTransitionPage(
+          child: FreeReadWidget(state.pathParameters['no']),
+        ),
+      ),
+      GoRoute(
+        path: FreeCommentWriteWidget.routePath,
+        name: FreeCommentWriteWidget.routeName,
+        pageBuilder: (context, state) => NoTransitionPage(
+          child: FreeCommentWriteWidget(state.pathParameters['no']),
+        ),
+      ),
+    ],
   ),
 ];
 
@@ -64,10 +101,22 @@ final routesProvider = Provider((ref) {
         builder: (context, state, navigationShell) =>
             ScaffoldWithNav(navigationShell: navigationShell),
         branches: <StatefulShellBranch>[
-          StatefulShellBranch(routes: _homeRoutes),
-          StatefulShellBranch(routes: _freeRoutes),
-          StatefulShellBranch(routes: _qnaRoutes),
-          StatefulShellBranch(routes: _profileRoutes),
+          StatefulShellBranch(
+            routes: _homeRoutes,
+            observers: [MyNavigatorObserver()],
+          ),
+          StatefulShellBranch(
+            routes: _freeRoutes,
+            observers: [MyNavigatorObserver()],
+          ),
+          StatefulShellBranch(
+            routes: _qnaRoutes,
+            observers: [MyNavigatorObserver()],
+          ),
+          StatefulShellBranch(
+            routes: _profileRoutes,
+            observers: [MyNavigatorObserver()],
+          ),
         ],
       ),
       GoRoute(
